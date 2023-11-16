@@ -1,6 +1,5 @@
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.PriorityQueue;
 import java.util.Queue;
@@ -39,7 +38,7 @@ public class Solver {
     }
 
     // Solves the puzzle using DFS Algorithm and a HashSet to store visited states
-    State dfsSolve(State start) {
+    Node dfsSolve(State start) {
         // current time in milliseconds, used to calculate time
         double begin = System.currentTimeMillis();
 
@@ -53,11 +52,10 @@ public class Solver {
         // Maximum value of the Memory usage
         long maxMemUsage = beforeUsedMem;
 
-        Set<State> visited = new LinkedHashSet<State>();
-        // LinkedHashSet allows to iterate over the objects stored inside by insertion
-        // order.
-        Stack<State> st = new Stack<State>();
-        st.push(start);
+        Set<Node> visited = new HashSet<Node>();
+        Stack<Node> st = new Stack<Node>();
+        Node initialNode = new Node(null, start, false);
+        st.push(initialNode);
         while (!st.isEmpty()) {
 
             // Calculating Memory Usage
@@ -66,29 +64,23 @@ public class Solver {
                 maxMemUsage = curMemUsage;
             }
 
-            State temp = new State(st.pop());
-
-            if (temp.isSolved()) {
-                visited.add(temp);
-                // for (State state : visited) {
-                // state.print_board();
-                // System.out.println("-------------------------");
-                // }
-
-                System.out.println("The board was solved in " + (visited.size() - 1) + " steps");
+            Node tempNode = st.pop();
+            if (tempNode.state.isSolved()) {
+                int steps = printPath(tempNode);
+                System.out.println("The board was solved in " + steps + " steps");
                 System.out.println("Time elapsed: " + ((System.currentTimeMillis() - begin) / 1000.0) + " seconds");
                 System.out.println("Memory usage: " + maxMemUsage / 1000.0 + " KBs");
 
-                return temp;
+                return tempNode;
             }
 
-            if (!visited.contains(temp)) {
-                visited.add(temp);
+            if (!visited.contains(tempNode)) {
+                visited.add(tempNode);
 
-                for (State state : temp.possibleSteps()) {
-                    if (!visited.contains(state)) {
-                        State child = new State(state);
-                        st.push(child);
+                for (State state : tempNode.state.possibleSteps()) {
+                    Node childNode = new Node(tempNode, state, false);
+                    if (!visited.contains(childNode)) {
+                        st.push(childNode);
                     }
                 }
             }
@@ -101,7 +93,7 @@ public class Solver {
     }
 
     // Solves the puzzle using BFS Algorithm and a HashSet to store visited states
-    State bfsSolve(State start) {
+    Node bfsSolve(State start) {
         // current time in milliseconds, used to calculate time
         double begin = System.currentTimeMillis();
 
@@ -115,10 +107,12 @@ public class Solver {
         // Maximum value of the Memory usage
         long maxMemUsage = beforeUsedMem;
 
-        Set<State> visited = new LinkedHashSet<State>();
-        Queue<State> q = new LinkedList<State>();
+        Set<Node> visited = new HashSet<Node>();
+        Queue<Node> q = new LinkedList<Node>();
 
-        q.add(start);
+        Node initialNode = new Node(null, start, false);
+
+        q.add(initialNode);
         while (!q.isEmpty()) {
 
             // Calculating Memory Usage
@@ -127,27 +121,23 @@ public class Solver {
                 maxMemUsage = curMemUsage;
             }
 
-            State temp = new State(q.poll());
+            Node tempNode = q.poll();
 
-            if (temp.isSolved()) {
-                visited.add(temp);
-                // for (State state : visited) {
-                // state.print_board();
-                // System.out.println("-------------------------");
-                // }
-                System.out.println("The board was solved in " + (visited.size() - 1) + " steps");
+            if (tempNode.state.isSolved()) {
+                int steps = printPath(tempNode);
+                System.out.println("The board was solved in " + steps + " steps");
                 System.out.println("Time elapsed: " + ((System.currentTimeMillis() - begin) / 1000.0) + " seconds");
                 System.out.println("Memory usage: " + maxMemUsage / 1000.0 + " KBs");
 
-                return temp;
+                return tempNode;
             }
-            if (!visited.contains(temp)) {
-                visited.add(temp);
+            if (!visited.contains(tempNode)) {
+                visited.add(tempNode);
 
-                for (State state : temp.possibleSteps()) {
-                    if (!visited.contains(state)) {
-                        State child = new State(state);
-                        q.add(child);
+                for (State state : tempNode.state.possibleSteps()) {
+                    Node childNode = new Node(tempNode, state, false);
+                    if (!visited.contains(childNode)) {
+                        q.add(childNode);
                     }
                 }
 
@@ -169,8 +159,8 @@ public class Solver {
 
         PriorityQueue<Node> pq = new PriorityQueue<Node>();
         Set<Node> visited = new HashSet<Node>();
-        Node Startnode = new Node(null, start);
-        pq.add(Startnode); 
+        Node Startnode = new Node(null, start, false);
+        pq.add(Startnode);
         // System.out.println("added start");
         while (!pq.isEmpty()) {
             curMemUsage = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory() - beforeUsedMem;
@@ -191,7 +181,7 @@ public class Solver {
             // System.out.println("adding to visited..");
             visited.add(tempNode);
 
-            for (Node childNode : tempNode.getChildren()) {
+            for (Node childNode : tempNode.getChildren(false)) {
                 if (!visited.contains(childNode)) {
                     // System.out.println("not contain");
                     pq.add(childNode);
@@ -221,7 +211,7 @@ public class Solver {
 
         PriorityQueue<Node> pq = new PriorityQueue<Node>();
         Set<Node> visited = new HashSet<Node>();
-        Node Startnode = new Node(null, start);
+        Node Startnode = new Node(null, start, true);
         pq.add(Startnode);
         while (!pq.isEmpty()) {
             curMemUsage = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory() - beforeUsedMem;
@@ -239,16 +229,17 @@ public class Solver {
             }
             visited.add(tempNode);
 
-            for (Node childNode : tempNode.getChildren()) {
+            for (Node childNode : tempNode.getChildren(true)) {
                 if (!visited.contains(childNode)) {
                     pq.add(childNode);
                 } else {
-                    //Cannot iterate over a Queue while also modifying it.
-                    //Easiest solution is to iterate over a copy of the queue while modifying the original
+                    // Cannot iterate over a Queue while also modifying it.
+                    // Easiest solution is to iterate over a copy of the queue while modifying the
+                    // original
                     PriorityQueue<Node> pqCopy = new PriorityQueue<>(pq);
                     for (Node n : pqCopy) {
                         if (n.state.equals(childNode.state)
-                                && childNode.heuristicValue < n.heuristicValue) {
+                                && childNode.cost < n.cost) {
                             pq.remove(n);
                             pq.add(childNode);
                         }
@@ -265,7 +256,7 @@ public class Solver {
         }
         int steps = printPath(node.parent);
         node.state.print_board();
-        System.out.println("-------------------------");
+        System.out.println("-----------------------------\n");
         return steps + 1;
     }
 }

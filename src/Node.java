@@ -4,37 +4,37 @@ public class Node implements Comparable<Node> {
     Node parent;
     State state;
     int cost;
-    int heuristicValue;
 
-    Node(Node parent, State state) {
+    Node(Node parent, State state, boolean isHeuristic) {
         this.parent = parent;
         this.state = state;
-        calcCost();
-        heuristicValue = calcHeuristic();
+        if (isHeuristic)
+            cost = calcHeuristic();
+        else
+            cost = calcCost();
     }
 
-    ArrayList<Node> getChildren() {
+    ArrayList<Node> getChildren(boolean isHeuristic) {
         ArrayList<Node> children = new ArrayList<Node>();
 
         ArrayList<State> a = this.state.possibleSteps();
         for (State child : a) {
-            Node childNode = new Node(this, child);
+            Node childNode = new Node(this, child, isHeuristic);
             children.add(childNode);
         }
         return children;
     }
 
-    //calculates the cost of the current node
-    void calcCost() {
+    // calculates the cost of the current node
+    int calcCost() {
         if (this.parent == null) {
-            cost = 0;
-            return;
+            return 0;
         }
-        //cost = parent.cost+1;
-        cost = difference(parent)+parent.cost;
+        // cost = parent.cost+1;
+        return difference(parent) + parent.cost;
     }
 
-    //Counts 
+    // Counts
     int difference(Node n) {
         int count = 0;
         for (int i = 0; i < state.board.length; i++) {
@@ -47,8 +47,7 @@ public class Node implements Comparable<Node> {
         return count;
     }
 
-
-    int calcHeuristic(){
+    int calcHeuristic() {
         int count = 0;
         for (int i = 0; i < state.board.length; i++) {
             for (int j = 0; j < state.board[0].length; j++) {
@@ -59,7 +58,6 @@ public class Node implements Comparable<Node> {
         }
         return count;
     }
-
 
     @Override
     public int compareTo(Node node) {
