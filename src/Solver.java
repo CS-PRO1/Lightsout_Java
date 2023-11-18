@@ -22,11 +22,11 @@ public class Solver {
     ArrayList<State> userPlay(Scanner input, State curState, ArrayList<State> states) {
         while (!curState.isSolved()) {
             System.out.println("Enter the desired field's coordinates:");
-            System.out.println("Row: ");
+            System.out.print("Row: ");
             int r = input.nextInt();
             input.nextLine();
 
-            System.out.println("Column: ");
+            System.out.print("Column: ");
             int c = input.nextInt();
             input.nextLine();
 

@@ -12,7 +12,7 @@ public class State {
         this.board = new boolean[x][y];
 
         // Asking to use the automatic random filling or manual fill
-        System.out.println("Do you want to fill the board maunally? (Y/N)");
+        System.out.print("Do you want to fill the board maunally? (Y/N): ");
         char c = input.next().charAt(0);
         if (c == 'y' || c == 'Y')
             manual_fill_board(input);
@@ -44,7 +44,7 @@ public class State {
             }
         }
         if (this.isSolved()) {
-            System.out.println("Board was already solved, randomizing...");
+            System.out.println("Generated board was already solved. Randomizing again...");
             random_fill_board();
         }
     }
@@ -55,10 +55,10 @@ public class State {
         System.out.println("Enter 0s for off and 1s for on");
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board[i].length; j++) {
-                System.out.println("Enter the value for the (" + i + "," + j + ") coordinate");
-                value = input.nextInt();
-                input.nextLine();
                 while (true) {
+                    System.out.print("Enter the value for the (" + i + "," + j + ") coordinate: ");
+                    value = input.nextInt();
+                    input.nextLine();
                     if (value == 0) {
                         board[i][j] = false;
                         break;

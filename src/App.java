@@ -8,7 +8,7 @@ public class App {
         g.Play();
         Scanner input = new Scanner(System.in);
         while (true) {
-            System.out.println("Wanna play again? (Y/N)");
+            System.out.print("Wanna play again? (Y/N): ");
             char r = input.nextLine().charAt(0);
             if (r == 'y' || r == 'Y') {
                 g = new Game();

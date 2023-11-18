@@ -18,11 +18,11 @@ public class Game {
                         "Interacting with the board is done by selecting a field where the light is activated \n"
                         + "When you select a field, the light is turned off in that field, however it'll reverese the state of the surrounding fields");
         // Allowing the user to enter specific dimensions of the board
-        System.out.println("please enter the number of rows in the board");
+        System.out.print("please enter the number of rows in the board: ");
         int x = input.nextInt();
         input.nextLine();
 
-        System.out.println("please enter the number of columns in the board: ");
+        System.out.print("please enter the number of columns in the board: ");
         int y = input.nextInt();
         input.nextLine();
 
@@ -49,6 +49,7 @@ public class Game {
             System.out.println("Enter 5 to use the UCS Solver");
             System.out.println("Enter 6 to use the Hill-Climbing Solver");
             System.out.println("Enter 0 to exit the game");
+            System.out.print("Your choice: ");
             int x = input.nextInt();
             input.nextLine();
 
@@ -95,10 +96,10 @@ public class Game {
         System.out.println("Congratulations! You've solved the puzzle in " + (states.size() - 1) + " moves!");
         System.out.println("Thank you for playing!");
         // Allowing the user to printout the game's states
-        System.out.println("Print solve path? (Y/N)");
+        System.out.print("Print solve path? (Y/N): ");
         char q = input.nextLine().charAt(0);
         if (q == 'y' || q == 'Y') {
-            printSolvePath();
+            printManualSolvePath();
             input.close();
         }
         if (q == 'n' || q == 'N') {
@@ -108,7 +109,7 @@ public class Game {
     }
 
     // Prints the steps the user went through while manually solving the game
-    void printSolvePath() {
+    void printManualSolvePath() {
         {
             for (State s : states) {
                 s.print_board();
