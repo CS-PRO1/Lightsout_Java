@@ -76,7 +76,6 @@ public class Node implements Comparable<Node> {
         return state.equals(node.state);
     }
 
-
     @Override
     public int hashCode() {
         return state.hashCode();

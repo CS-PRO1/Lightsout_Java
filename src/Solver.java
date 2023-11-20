@@ -223,16 +223,18 @@ public class Solver {
             visited.add(tempNode);
 
             ArrayList<Node> children = tempNode.getChildren();
-            Node bestchild = children.get(0);
+            Node bestchild = null;
+            int bestheuristic = Integer.MAX_VALUE;
             for (Node childNode : children) {
-                if (!visited.contains(childNode) && childNode.heuristic < bestchild.heuristic) {
-                    bestchild = childNode;
+                if (childNode.heuristic < bestheuristic) {
+                    if (!visited.contains(childNode))
+                        bestchild = childNode;
                 }
             }
             q.add(bestchild);
         }
-
         System.out.println("Not Solvable");
+        return;
     }
 
     void A_starSovler(State start) {
