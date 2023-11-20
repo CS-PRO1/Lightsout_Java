@@ -54,7 +54,7 @@ public class Solver {
 
         Set<Node> visited = new HashSet<Node>();
         Stack<Node> st = new Stack<Node>();
-        Node initialNode = new Node(null, start, false);
+        Node initialNode = new Node(null, start);
         st.push(initialNode);
         while (!st.isEmpty()) {
 
@@ -78,7 +78,7 @@ public class Solver {
                 visited.add(tempNode);
 
                 for (State state : tempNode.state.possibleSteps()) {
-                    Node childNode = new Node(tempNode, state, false);
+                    Node childNode = new Node(tempNode, state);
                     if (!visited.contains(childNode)) {
                         st.push(childNode);
                     }
@@ -110,7 +110,7 @@ public class Solver {
         Set<Node> visited = new HashSet<Node>();
         Queue<Node> q = new LinkedList<Node>();
 
-        Node initialNode = new Node(null, start, false);
+        Node initialNode = new Node(null, start);
 
         q.add(initialNode);
         while (!q.isEmpty()) {
@@ -135,7 +135,7 @@ public class Solver {
                 visited.add(tempNode);
 
                 for (State state : tempNode.state.possibleSteps()) {
-                    Node childNode = new Node(tempNode, state, false);
+                    Node childNode = new Node(tempNode, state);
                     if (!visited.contains(childNode)) {
                         q.add(childNode);
                     }
@@ -159,15 +159,13 @@ public class Solver {
 
         PriorityQueue<Node> pq = new PriorityQueue<Node>();
         Set<Node> visited = new HashSet<Node>();
-        Node Startnode = new Node(null, start, false);
+        Node Startnode = new Node(null, start);
         pq.add(Startnode);
-        // System.out.println("added start");
         while (!pq.isEmpty()) {
             curMemUsage = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory() - beforeUsedMem;
             if (curMemUsage > maxMemUsage) {
                 maxMemUsage = curMemUsage;
             }
-            // System.out.println("polling..");
             Node tempNode = pq.poll();
             if (tempNode.state.isSolved()) {
                 System.out.println("Solution Path: ");
@@ -175,17 +173,13 @@ public class Solver {
                 System.out.println("The board was solved in " + steps + " steps");
                 System.out.println("Time elapsed: " + ((System.currentTimeMillis() - begin) / 1000.0) + " seconds");
                 System.out.println("Memory usage: " + maxMemUsage / 1000.0 + " KBs");
-                // printPath(tempNode);
                 return;
             }
-            // System.out.println("adding to visited..");
             visited.add(tempNode);
 
-            for (Node childNode : tempNode.getChildren(false)) {
+            for (Node childNode : tempNode.getChildren()) {
                 if (!visited.contains(childNode)) {
-                    // System.out.println("not contain");
                     pq.add(childNode);
-                    // System.out.println("adding");
                 } else {
                     PriorityQueue<Node> pqCopy = new PriorityQueue<>(pq);
                     for (Node n : pqCopy) {
@@ -193,7 +187,6 @@ public class Solver {
                                 && childNode.cost < n.cost) {
                             pq.remove(n);
                             pq.add(childNode);
-                            // System.out.println("adding");
                         }
                     }
                 }
@@ -209,9 +202,49 @@ public class Solver {
         long curMemUsage = 0;
         long maxMemUsage = beforeUsedMem;
 
-        PriorityQueue<Node> pq = new PriorityQueue<Node>();
+        Queue<Node> q = new LinkedList<Node>();
         Set<Node> visited = new HashSet<Node>();
-        Node Startnode = new Node(null, start, true);
+        Node Startnode = new Node(null, start);
+        q.add(Startnode);
+        while (!q.isEmpty()) {
+            curMemUsage = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory() - beforeUsedMem;
+            if (curMemUsage > maxMemUsage) {
+                maxMemUsage = curMemUsage;
+            }
+            Node tempNode = q.poll();
+            if (tempNode.state.isSolved()) {
+                System.out.println("Solution Path: ");
+                int steps = printPath(tempNode);
+                System.out.println("The board was solved in " + steps + " steps");
+                System.out.println("Time elapsed: " + ((System.currentTimeMillis() - begin) / 1000.0) + " seconds");
+                System.out.println("Memory usage: " + maxMemUsage / 1000.0 + " KBs");
+                return;
+            }
+            visited.add(tempNode);
+
+            ArrayList<Node> children = tempNode.getChildren();
+            Node bestchild = children.get(0);
+            for (Node childNode : children) {
+                if (!visited.contains(childNode) && childNode.heuristic < bestchild.heuristic) {
+                    bestchild = childNode;
+                }
+            }
+            q.add(bestchild);
+        }
+
+        System.out.println("Not Solvable");
+    }
+
+    void A_starSovler(State start) {
+
+        double begin = System.currentTimeMillis();
+        long beforeUsedMem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+        long curMemUsage = 0;
+        long maxMemUsage = beforeUsedMem;
+
+        PriorityQueue<Node> pq = new PriorityQueue<Node>(new A_starComparator());
+        Set<Node> visited = new HashSet<Node>();
+        Node Startnode = new Node(null, start);
         pq.add(Startnode);
         while (!pq.isEmpty()) {
             curMemUsage = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory() - beforeUsedMem;
@@ -229,13 +262,10 @@ public class Solver {
             }
             visited.add(tempNode);
 
-            for (Node childNode : tempNode.getChildren(true)) {
+            for (Node childNode : tempNode.getChildren()) {
                 if (!visited.contains(childNode)) {
                     pq.add(childNode);
                 } else {
-                    // Cannot iterate over a Queue while also modifying it.
-                    // Easiest solution is to iterate over a copy of the queue while modifying the
-                    // original
                     PriorityQueue<Node> pqCopy = new PriorityQueue<>(pq);
                     for (Node n : pqCopy) {
                         if (n.state.equals(childNode.state)

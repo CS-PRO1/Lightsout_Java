@@ -4,22 +4,24 @@ public class Node implements Comparable<Node> {
     Node parent;
     State state;
     int cost;
+    int heuristic;
+    int totalcost;
 
-    Node(Node parent, State state, boolean isHeuristic) {
+    Node(Node parent, State state) {
         this.parent = parent;
         this.state = state;
-        if (isHeuristic)
-            cost = calcHeuristic();
-        else
-            cost = calcCost();
+        cost = calcCost();
+        heuristic = calcHeuristic();
+        totalcost = cost + heuristic;
+
     }
 
-    ArrayList<Node> getChildren(boolean isHeuristic) {
+    ArrayList<Node> getChildren() {
         ArrayList<Node> children = new ArrayList<Node>();
 
         ArrayList<State> a = this.state.possibleSteps();
         for (State child : a) {
-            Node childNode = new Node(this, child, isHeuristic);
+            Node childNode = new Node(this, child);
             children.add(childNode);
         }
         return children;
@@ -74,10 +76,7 @@ public class Node implements Comparable<Node> {
         return state.equals(node.state);
     }
 
-    // Overriding the default 'hashCode' function to create Hashes based on each
-    // board
-    // Such that states with identical boards produce the same Hash for easier
-    // comparison
+
     @Override
     public int hashCode() {
         return state.hashCode();

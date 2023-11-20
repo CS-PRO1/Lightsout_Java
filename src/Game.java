@@ -48,6 +48,7 @@ public class Game {
             System.out.println("Enter 4 to use the BFS Solver");
             System.out.println("Enter 5 to use the UCS Solver");
             System.out.println("Enter 6 to use the Hill-Climbing Solver");
+            System.out.println("Enter 7 to use the A* Solver");
             System.out.println("Enter 0 to exit the game");
             System.out.print("Your choice: ");
             int x = input.nextInt();
@@ -77,6 +78,9 @@ public class Game {
                     break;
                 case 6:
                     solve.HillClimbingSolver(curState);
+                    break;
+                case 7:
+                    solve.A_starSovler(curState);
                     break;
 
                 default:
