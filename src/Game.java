@@ -54,6 +54,8 @@ public class Game {
             int x = input.nextInt();
             input.nextLine();
 
+            // Switch for playing the game manually or use any of the implemented solving
+            // algorithms
             switch (x) {
                 case 0:
                     return;

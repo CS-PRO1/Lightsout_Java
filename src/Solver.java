@@ -37,7 +37,7 @@ public class Solver {
         return states;
     }
 
-    // Solves the puzzle using DFS Algorithm and a HashSet to store visited states
+    // Solves the puzzle using DFS Algorithm
     Node dfsSolve(State start) {
         // current time in milliseconds, used to calculate time
         double begin = System.currentTimeMillis();
@@ -92,7 +92,7 @@ public class Solver {
         return null;
     }
 
-    // Solves the puzzle using BFS Algorithm and a HashSet to store visited states
+    // Solves the puzzle using BFS Algorithm
     Node bfsSolve(State start) {
         // current time in milliseconds, used to calculate time
         double begin = System.currentTimeMillis();
@@ -150,6 +150,7 @@ public class Solver {
         return null;
     }
 
+    // Solves the puzzle using UCS Algorithm 
     void UCSSovler(State start) {
 
         double begin = System.currentTimeMillis();
@@ -195,6 +196,7 @@ public class Solver {
         System.out.println("Not Solvable");
     }
 
+    // solves the puzzle using HillClimbing Algorithm
     void HillClimbingSolver(State start) {
 
         double begin = System.currentTimeMillis();
@@ -236,9 +238,10 @@ public class Solver {
         System.out.println("Not Solvable");
         return;
     }
-
+    
+    // Solves the puzzle using A* Algorithm
     void A_starSovler(State start) {
-
+        
         double begin = System.currentTimeMillis();
         long beforeUsedMem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
         long curMemUsage = 0;
@@ -282,6 +285,7 @@ public class Solver {
         System.out.println("Not Solvable");
     }
 
+    // Prints the solution path recursively from the root node to the solved node
     public int printPath(Node node) {
         if (node == null) {
             return 0;

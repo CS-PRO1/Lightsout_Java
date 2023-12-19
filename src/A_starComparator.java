@@ -1,5 +1,6 @@
 import java.util.Comparator;
 
+//An implementation of the Comparator interface for use in the A* PriorityQueue addition.
 public class A_starComparator implements Comparator<Node> {
     public int compare(Node n1, Node n2) {
         if (n1.totalcost < n2.totalcost)

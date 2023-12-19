@@ -1,12 +1,13 @@
 import java.util.ArrayList;
 
 public class Node implements Comparable<Node> {
-    Node parent;
-    State state;
-    int cost;
-    int heuristic;
-    int totalcost;
+    Node parent; // parent node
+    State state; // state and board of the current node
+    int cost; // UCS cost <g()>
+    int heuristic; // HillClimbing Heuristic <h()>
+    int totalcost; // A* combined cost <f() = g() + h()>
 
+    // Constructor to set all values.
     Node(Node parent, State state) {
         this.parent = parent;
         this.state = state;
@@ -16,18 +17,17 @@ public class Node implements Comparable<Node> {
 
     }
 
+    // Returns an ArrayList of child nodes that spawn from the current node.
     ArrayList<Node> getChildren() {
         ArrayList<Node> children = new ArrayList<Node>();
-
-        ArrayList<State> a = this.state.possibleSteps();
-        for (State child : a) {
+        for (State child : this.state.possibleSteps()) {
             Node childNode = new Node(this, child);
             children.add(childNode);
         }
         return children;
     }
 
-    // calculates the cost of the current node
+    // calculates the UCS/A* cost of the current node
     int calcCost() {
         if (this.parent == null) {
             return 0;
@@ -36,7 +36,7 @@ public class Node implements Comparable<Node> {
         return difference(parent) + parent.cost;
     }
 
-    // Counts
+    // Counts how many lights are on that were previously off in the previous state
     int difference(Node n) {
         int count = 0;
         for (int i = 0; i < state.board.length; i++) {
@@ -49,6 +49,8 @@ public class Node implements Comparable<Node> {
         return count;
     }
 
+    // Counts how many lights are currently turned on to use as heuristic cost for
+    // HillClimbing/A*
     int calcHeuristic() {
         int count = 0;
         for (int i = 0; i < state.board.length; i++) {
@@ -58,14 +60,18 @@ public class Node implements Comparable<Node> {
                 }
             }
         }
-        return count;
+        return count / 5;
     }
 
+    // Compares 2 different Nodes based on the UCS cost, for use in PriorityQueue
+    // addition
     @Override
     public int compareTo(Node node) {
         return Integer.compare(cost, node.cost);
     }
 
+    // detects if a current node is equal to a different node, for use in the
+    // 'visited' HashSets
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -76,6 +82,7 @@ public class Node implements Comparable<Node> {
         return state.equals(node.state);
     }
 
+    // creates HasheCodes for each node based on their state
     @Override
     public int hashCode() {
         return state.hashCode();
